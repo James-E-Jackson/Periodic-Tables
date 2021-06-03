@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router";
 import ErrorAlert from "../layout/ErrorAlert";
-import { postReservation } from "../utils/api";
+import { createReservation } from "../utils/api";
 
 function ReservationForm(){
     const defaultState = {
@@ -13,18 +13,18 @@ function ReservationForm(){
         people: 1,
     };
     const [formData, setFormData] = useState(defaultState);
-    const [error, setError] = useState("");
+    const [error, setError] = useState(null);
     const errors = [];
     const [errorArr, setErrorArr] = useState([]);
     const history = useHistory();
     
-    
-
-    const handleSubmit = () => {
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        setErrorArr([])
         if(valid()) {
-            postReservation(formData)
+            createReservation(formData)
             .then(()=> history.push(`/dashboard?date=${formData.reservation_date}`))
-            .catch((err) => setError(err));   
+            .catch(setError);   
         }else{
             setErrorArr(errors)
         }
@@ -46,7 +46,7 @@ function ReservationForm(){
             errors.push({message: "Cannot make a reservation after 9:30 PM or before 10:30 AM"})
         }
         //console.log(errors)
-        return errors.length === 0;
+        return !errors.length;
     }
 
     const errorList = () => errorArr.map((err, index) => <ErrorAlert key={index} error={err} />);
@@ -55,7 +55,7 @@ function ReservationForm(){
     return (
     <div className="form-group">
         {errorList()}
-        {error ? <ErrorAlert error={error} />:null}
+        <ErrorAlert error={error} />
         <label>First Name</label>
         <input
         required
@@ -125,6 +125,8 @@ function ReservationForm(){
         type="time"
         name="reservation_time"
         placeholder="HH:MM"
+        min="09:30"
+        max="21:30"
         pattern="[0-9]{2}:[0-9]{2}"
         value={formData.reservation_time}
         onChange={(event=>
@@ -133,6 +135,7 @@ function ReservationForm(){
                 reservation_time: event.target.value
             }))}>
         </input>
+        <label>Party Size</label>
         <input
         required
         className="form-control"
@@ -148,7 +151,10 @@ function ReservationForm(){
             }))}>
         </input>
         <button type="submit" onClick={handleSubmit}>Submit</button>
-        <button onClick={() =>{history.goBack()}}>Cancel</button>
+        <button onClick={(event) =>{
+            event.preventDefault()
+            history.goBack()
+            }}>Cancel</button>
     </div>)
 }
 

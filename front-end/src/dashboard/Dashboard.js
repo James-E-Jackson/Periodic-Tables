@@ -31,7 +31,7 @@ function Dashboard({ date }) {
     return () => abortController.abort();
   }
   const reservationList = () => reservations.map((reservation, index)=><Reservation reservation={reservation} key={index}/>);
-  const tableList = () => tables.map((table, index) =><Table table={table} key={index}/>);
+  const tableList = () => tables.map((table, index) =><Table loadDashboard={loadDashboard} table={table} occupied={false} key={index}/>);
   return (
     <main>
       <h1>Dashboard</h1>

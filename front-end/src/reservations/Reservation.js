@@ -10,7 +10,7 @@ function Reservation({reservation}){
         <div>
             <div>Name: {last_name}, {first_name} Mobile: {mobile_number} ID: {reservation_id}</div>
             <div>Date: {reservation_date} Time: {reservation_time} Seating: {people} Status: {status}</div>
-            <button href={`/reservations/${reservation_id}/seat`}>Seat</button>
+            <a className="btn btn-primary" href={`/reservations/${reservation_id}/seat`}>Seat</a>
         </div>
     )
 }

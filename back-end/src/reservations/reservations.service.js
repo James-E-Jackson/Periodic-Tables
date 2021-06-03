@@ -11,8 +11,7 @@ function create(data){
     //console.log(data)
     return knex("reservations")
         .insert(data)
-        .returning(["first_name", "last_name", "mobile_number", 
-        "people", "reservation_date", "reservation_time"])
+        .returning("*")
         .then((arr) => arr[0])
 }
 function read(reservation_id){

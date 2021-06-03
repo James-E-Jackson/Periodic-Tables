@@ -1,21 +1,26 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router";
-import { postTable } from "../utils/api";
+import ErrorAlert from "../layout/ErrorAlert";
+import { createTable } from "../utils/api";
 
 function TableForm(){
     const defaultState = {
         table_name: "",
-        capacity: 1,
+        capacity: 0,
+        status: "free",
     };
     const [formData, setFormData] = useState(defaultState);
     const history = useHistory();
-    const [error, setError] = useState("")
+    const [error, setError] = useState(null)
 
-    const handleSubmit = () => {
+    const handleSubmit = (event) => {
+        const abortController = new AbortController();
+        event.preventDefault();
+        setError(null)
         if(valid()) {
-        postTable(formData)
+        createTable(formData, abortController.signal)
             .then(()=> history.push(`/dashboard`))
-            .catch((err) => setError(err));
+            .catch(setError);
         }
     }
     const valid = () => {
@@ -24,11 +29,12 @@ function TableForm(){
         }else if(formData.table_name.length < 2){
             setError({message: "Table name must be at least 2 characters long"})
         }
-        return error === "";
+        return !error;
     }
 
     return(
-        <form>
+        <form noValidate>
+            <ErrorAlert error={error} />
             <label>Table Name</label>
             <input
             required
@@ -61,7 +67,10 @@ function TableForm(){
                 }))}>
             </input>
             <button type="submit" onClick={handleSubmit}>Submit</button>
-            <button onClick={() =>{history.goBack()}}>Cancel</button>
+            <button onClick={(event) =>{
+                event.preventDefault();
+                history.goBack()
+                }}>Cancel</button>
         </form>
     )
 }
