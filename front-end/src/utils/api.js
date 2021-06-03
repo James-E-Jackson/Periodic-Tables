@@ -74,3 +74,18 @@ export async function postReservation(data){
   //console.log(data)
   return await fetchJson(url, {method: "POST", headers, body: JSON.stringify({data})}, {});
 }
+
+export async function postTable(data){
+  const url = new URL(`${API_BASE_URL}/tables`);
+  return await fetchJson(url, {method: "POST", headers, body: JSON.stringify({data})}, {});
+}
+
+export async function listTables(){
+  const url = new URL(`${API_BASE_URL}/tables`);
+  return await fetchJson(url, {headers}, []);
+}
+
+export async function findReservation(reservation_id){
+  const url = new URL(`${API_BASE_URL}/reservations/${reservation_id}`);
+  return await fetchJson(url, {headers}, {})
+}

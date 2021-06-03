@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { listReservations } from "../utils/api";
+import { listReservations, listTables } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import Reservation from "../reservations/Reservation";
+import Table from "../tables/Table";
 
 /**
  * Defines the dashboard page.
@@ -12,25 +13,25 @@ import Reservation from "../reservations/Reservation";
 function Dashboard({ date }) {
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
+  const [tables, setTables] = useState([])
+  const [tablesError, setTablesError] = useState(null)
 
   useEffect(loadDashboard, [date]);
 
   function loadDashboard() {
     const abortController = new AbortController();
     setReservationsError(null);
+    setTablesError(null);
     listReservations({ date }, abortController.signal)
       .then(setReservations)
       .catch(setReservationsError);
+    listTables({ date }, abortController.signal)
+      .then(setTables)
+      .catch(setTablesError);
     return () => abortController.abort();
   }
-  let reservationList = null;
-  if(reservations){
-    reservationList = reservations.map((reservation, index)=>{
-      return(
-        <Reservation reservation={reservation} key={index}/>
-      )
-    })
-  }
+  const reservationList = () => reservations.map((reservation, index)=><Reservation reservation={reservation} key={index}/>);
+  const tableList = () => tables.map((table, index) =><Table table={table} key={index}/>);
   return (
     <main>
       <h1>Dashboard</h1>
@@ -38,7 +39,9 @@ function Dashboard({ date }) {
         <h4 className="mb-0">Reservations for {date}</h4>
       </div>
       <ErrorAlert error={reservationsError} />
-      {reservationList}
+      <ErrorAlert error={tablesError} />
+      {reservationList()}
+      {tableList()}
     </main>
   );
 }

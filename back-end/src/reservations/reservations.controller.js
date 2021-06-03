@@ -9,6 +9,10 @@ async function list(req, res) {
   res.json({ data });
 }
 
+async function read(req, res){
+  const data = res.locals.reservation;
+  res.json({ data })
+}
 
 async function create(req, res) {
   //console.log(req.body.data)
@@ -18,15 +22,15 @@ async function create(req, res) {
   res.status(201).json({ data })
 }
 async function isValidReservation(req, res, next){
-  const reservation = req.body.data;
-  if(!req.body.data){
+  const { data } = req.body;
+  if(!data){
     return next({
       status: 400,
-      message: "Data must exist and be contained in request.body.data"
+      message: "Data must exist and be contained in request.body"
     })
   }
   const {first_name ="", last_name ="", mobile_number="", status="",
-        reservation_date="", reservation_time="", people=""} = reservation;
+        reservation_date="", reservation_time="", people=""} = data;
   
   const today = new Date();
   const reservationDate = new Date(`${reservation_date}T${reservation_time}:00.000`);
@@ -69,26 +73,13 @@ async function isValidReservation(req, res, next){
     })
   }
 
-  // for(let [key, value] of Object.entries(reservation)){
-  //   if(!value){
-  //     return next({
-  //       status: 400,
-  //       message: `Each field must have an entry. Missing: ${key}`
-  //     })
-  //   }
-  // }
   if(!mobile_number.match(/^\(?([0-9]{3})\)?-?([0-9]{3})-?([0-9]{4})$/) && !mobile_number.match(/^\(?([0-9]{3})-?([0-9]{4})$/)){
     return next({
       status: 400,
       message: `${mobile_number} mobile_number formatted incorrectly must be XXX-XXX-XXXX or XXX-XXXX`
     })
   }
-  // if(!mobile_number){
-  //   return next({
-  //          status: 400,
-  //          message: `${mobile_number} mobile_number must be present`
-  //         })
-  // }
+
   if(!reservation_date.match(/^(19|20)\d{2}\-(0[1-9]|1[0-2])\-(0[1-9]|1\d|2\d|3[01])$/)){
     return next({
       status: 400,
@@ -105,7 +96,7 @@ async function isValidReservation(req, res, next){
   if(resTime > 2130 || resTime < 1030){
     return next({
       status: 400,
-      message: "Cannot make a reservation after 9:30 PM or before 10:30 AM"
+      message: "reservation_time must be after 9:30 PM or before 10:30 AM"
     })
 }
   if(reservationDate.getDay() === 2){
@@ -125,7 +116,18 @@ async function isValidReservation(req, res, next){
   return next();
 }
 
+async function reservationExists(req, res, next){
+  const { reservation_id } = req.params;
+  const reservation = await service.read(reservation_id);
+  if(reservation){
+    res.locals.reservation = reservation;
+    return next();
+  }
+  next({ status: 404, message: `reservation_id ${reservation_id} not found`})
+}
+
 module.exports = {
   list: asyncErrorBoundary(list),
   create: [asyncErrorBoundary(isValidReservation), asyncErrorBoundary(create)],
+  read: [asyncErrorBoundary(reservationExists), asyncErrorBoundary(read)],
 };

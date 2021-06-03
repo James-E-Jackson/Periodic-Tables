@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useHistory } from "react-router";
 import ErrorAlert from "../layout/ErrorAlert";
 import { postReservation } from "../utils/api";
-import { today } from "../utils/date-time";
 
 function ReservationForm(){
     const defaultState = {
@@ -22,27 +21,16 @@ function ReservationForm(){
     
 
     const handleSubmit = () => {
-        const valid = validation();
-        if(!valid) {
-            setErrorArr(errors)
-        }
-        //console.log("submit", typeof formData.people)
-        if(typeof formData.people === "string"){
-            //console.log("is a string")
-            if(formData.people.match(/^[0-9]+$/)){
-                //setFormData({...formData, people: Number(formData.people)})
-                postReservation({...formData, people: Number(formData.people)})
-            .then(()=> history.push(`/dashboard?date=${formData.reservation_date}`))
-            .catch((err) => setError(err));
-            } 
-        }else{
+        if(valid()) {
             postReservation(formData)
             .then(()=> history.push(`/dashboard?date=${formData.reservation_date}`))
-            .catch((err) => setError(err));
+            .catch((err) => setError(err));   
+        }else{
+            setErrorArr(errors)
         }
     }
 
-    const validation = () => {
+    const valid = () => {
         const reservationDate = new Date(`${formData.reservation_date}T${formData.reservation_time}:00.000`);
         const today = new Date();
         const resTime = Number(formData.reservation_time.split(':').join(''));
@@ -53,7 +41,7 @@ function ReservationForm(){
         if(reservationDate.getDay() === 2){
             errors.push({message: "Closed on Tuesdays"})
         }
-        console.log(resTime)
+        //console.log(resTime)
         if(resTime > 2130 || resTime < 1030){
             errors.push({message: "Cannot make a reservation after 9:30 PM or before 10:30 AM"})
         }
@@ -151,13 +139,12 @@ function ReservationForm(){
         id="people"
         type="number"
         name="people"
-        min="1"
-        placeholder="1"
+        min={1}
         value={formData.people}
         onChange={(event=>
             setFormData({
                 ...formData,
-                people: event.target.value
+                people: Number(event.target.value)
             }))}>
         </input>
         <button type="submit" onClick={handleSubmit}>Submit</button>
