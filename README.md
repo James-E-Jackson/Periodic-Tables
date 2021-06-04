@@ -1,6 +1,6 @@
 # James Jackson - Periodic Tables
 
-This is my final project with Thinkful, it was created with React, Express, PostgreSQL, and Node.js. Periodic tables mimics some of the functionality of a restaurant's POS, allowing the user to create, edit, seat, and search for reservations as well as creating, monitoring, and updating tables and their occupancy status. 
+This is my final project with Thinkful. Periodic Tables mimics some of the functionality of a restaurant's POS, allowing the user to create, edit, seat, and search for reservations as well as creating, monitoring, and updating tables and their occupancy status. 
 
 # Front End - React
 
@@ -247,6 +247,11 @@ Returns status 200 and the updated reservation.
 If the table exists and is occupied, set the the status of the reservation currently seated to `finished`, and the status of the table to `null`. 
 
 Returns status 200 and the updated reservation
+
+<br>
+
+# Technologies
+This project was created with React.js, Express.js, PostgreSQL, Node.js, ElephantSQL, Bootstrap, Knex.js, and Jest.
 
 <br>
 
