@@ -53,7 +53,7 @@ function Reservation({ reservation, loadPage }){
                     <div className="col text-left pl-0">Mobile: {mobile_number}</div>
                     <div className="col text-right pr-0">Time: {reservation_time}</div>
                 </div>
-                {status !== "cancelled" ? 
+                {status !== "cancelled" && url !== `/reservations/${reservation_id}/seat` ? 
                 <div>
                     {status ==="booked" && url!=="/search"? 
                     <a 

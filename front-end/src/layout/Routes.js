@@ -18,7 +18,7 @@ import Search from "../reservations/Search";
  * @returns {JSX.Element}
  */
 function Routes() {
-  const date = useQuery().get("date")
+  const date = useQuery().get("date");
   return (
     <Switch>
       <Route exact={true} path="/">

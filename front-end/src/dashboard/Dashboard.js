@@ -13,8 +13,8 @@ import Table from "../tables/Table";
 function Dashboard({ date }) {
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
-  const [tables, setTables] = useState([])
-  const [tablesError, setTablesError] = useState(null)
+  const [tables, setTables] = useState([]);
+  const [tablesError, setTablesError] = useState(null);
 
   useEffect(loadDashboard, [date]);
 
@@ -30,10 +30,20 @@ function Dashboard({ date }) {
       .catch(setTablesError);
     return () => abortController.abort();
   }
-  const reservationList = () => reservations.map((reservation)=><Reservation loadPage={loadDashboard} reservation={reservation} key={reservation.reservation_id}/>);
-  const tableList = () => tables.map((table) =><Table loadPage={loadDashboard} table={table} key={table.table_id}/>);
+  const reservationList = () =>
+    reservations.map((reservation) => (
+      <Reservation
+        loadPage={loadDashboard}
+        reservation={reservation}
+        key={reservation.reservation_id}
+      />
+    ));
+  const tableList = () =>
+    tables.map((table) => (
+      <Table loadPage={loadDashboard} table={table} key={table.table_id} />
+    ));
   return (
-    <main >
+    <main>
       <h1>Dashboard</h1>
       <div className="d-md-flex mb-3">
         <h4 className="mb-0">Reservations for {date}</h4>
@@ -41,9 +51,7 @@ function Dashboard({ date }) {
       <ErrorAlert error={reservationsError} />
       <ErrorAlert error={tablesError} />
       <div className="row">
-        <div className="d-flex flex-column col">
-          {reservationList()}
-        </div>
+        <div className="d-flex flex-column col">{reservationList()}</div>
         <div className="d-flex flex-column col-5 text-center">
           <h4 className="">Tables</h4>
           <div className="d-flex flex-row">
