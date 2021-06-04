@@ -9,25 +9,26 @@ function Search(){
     const [reservations, setReservations] = useState([]);
     const [searched, setSearched] = useState(false)
 
-    const handleSearch = (event) => {
-        event.preventDefault();
-        const abortController = new AbortController();
 
+    function loadResults(){
+        const abortController = new AbortController();
         listReservations({mobile_number}, abortController.signal)
             .then(setReservations)
             .then(setSearched(true))
             .catch(setError)
     }
 
-    const reservationList = () => reservations.map((reservation)=><Reservation reservation={reservation} key={reservation.reservation_id}/>);
+    const reservationList = () => reservations.map((reservation)=><Reservation load={loadResults} reservation={reservation} key={reservation.reservation_id}/>);
     
 
     return (
         <div>
-            <form>
+            <form className="d-flex row justify-content-center">
                 <ErrorAlert error={error} />
-                <label>Enter a phone number to search</label>
+                <label className="col-3">Enter a phone number to search</label>
+                <div className="w-100"></div>
                 <input
+                    className="col-3 form-control"
                     name="mobile_number"
                     id="mobile_number"
                     type="tel"
@@ -35,12 +36,17 @@ function Search(){
                         setMobile(event.target.value)
                     }}></input>
                 <button 
+                className="btn btn-info mb-2"
                 type="submit"
-                onClick={handleSearch}
+                onClick={(event) => {
+                    event.preventDefault()
+                    loadResults()}}
                 >Search</button>
             </form>
             {searched && !reservations.length ? <p>No reservations found</p>:null}
-            {reservationList()}
+            <div className="col-6">
+                {reservationList()}
+            </div>
         </div>)
 }
 

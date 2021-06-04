@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { useHistory } from "react-router";
+import React, { useEffect, useState } from "react";
+import { useHistory, useParams } from "react-router";
 import ErrorAlert from "../layout/ErrorAlert";
-import { createReservation } from "../utils/api";
+import { createReservation, editReservation, findReservation } from "../utils/api";
 
 function ReservationForm(){
     const defaultState = {
@@ -12,19 +12,38 @@ function ReservationForm(){
         reservation_time: "",
         people: 1,
     };
+    const {reservation_id=null} = useParams();
     const [formData, setFormData] = useState(defaultState);
     const [error, setError] = useState(null);
     const errors = [];
     const [errorArr, setErrorArr] = useState([]);
     const history = useHistory();
     
+    useEffect(() => {
+        const abortController = new AbortController();
+        if(reservation_id){
+            findReservation(reservation_id, abortController.signal)
+                .then((response) => setFormData({...response, 
+                    reservation_date: response.reservation_date.substr(0,10),
+                    reservation_time: response.reservation_time.substr(0,5)
+                }))
+                .catch(setError)
+        }
+    }, [reservation_id])
+
     const handleSubmit = (event) => {
         event.preventDefault();
-        setErrorArr([])
-        if(valid()) {
-            createReservation(formData)
+        const abortController = new AbortController();
+        setErrorArr([]);
+
+        if(valid() && !reservation_id) {
+            createReservation(formData, abortController.signal)
             .then(()=> history.push(`/dashboard?date=${formData.reservation_date}`))
             .catch(setError);   
+        }else if(reservation_id){
+            editReservation(formData, abortController.signal)
+            .then(() => history.push(`/dashboard?date=${formData.reservation_date}`))
+            .catch(setError);
         }else{
             setErrorArr(errors)
         }
@@ -150,11 +169,18 @@ function ReservationForm(){
                 people: Number(event.target.value)
             }))}>
         </input>
-        <button type="submit" onClick={handleSubmit}>Submit</button>
-        <button onClick={(event) =>{
-            event.preventDefault()
-            history.goBack()
-            }}>Cancel</button>
+        <button 
+        className="btn btn-primary"
+        type="submit" 
+        onClick={handleSubmit}
+        >Submit</button>
+        <button 
+        className="btn btn-danger"
+        type="cancel" 
+        onClick={(event) =>{
+        event.preventDefault()
+        history.goBack()
+        }}>Cancel</button>
     </div>)
 }
 

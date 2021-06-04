@@ -66,11 +66,16 @@ function TableForm(){
                     capacity: Number(event.target.value)
                 }))}>
             </input>
-            <button type="submit" onClick={handleSubmit}>Submit</button>
-            <button onClick={(event) =>{
-                event.preventDefault();
-                history.goBack()
-                }}>Cancel</button>
+            <button 
+            className="btn btn-primary"
+            type="submit" 
+            onClick={handleSubmit}>Submit</button>
+            <button 
+            className="btn btn-danger"
+            onClick={(event) =>{
+            event.preventDefault();
+            history.goBack()
+            }}>Cancel</button>
         </form>
     )
 }
