@@ -30,8 +30,8 @@ function Dashboard({ date }) {
       .catch(setTablesError);
     return () => abortController.abort();
   }
-  const reservationList = () => reservations.map((reservation, index)=><Reservation loadDashboard={loadDashboard} reservation={reservation} key={index}/>);
-  const tableList = () => tables.map((table, index) =><Table loadDashboard={loadDashboard} table={table} key={index}/>);
+  const reservationList = () => reservations.map((reservation)=><Reservation reservation={reservation} key={reservation.reservation_id}/>);
+  const tableList = () => tables.map((table) =><Table loadDashboard={loadDashboard} table={table} key={table.table_id}/>);
   return (
     <main>
       <h1>Dashboard</h1>
