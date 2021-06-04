@@ -5,6 +5,7 @@ function listReservationsByDate(reservation_date){
     return knex("reservations")
         .select("*")
         .where({reservation_date})
+        .whereNot({"reservations.status": "finished"})
         .orderBy("reservation_time", "asc")
 }
 function create(data){
@@ -21,8 +22,20 @@ function read(reservation_id){
         .where({reservation_id})
         .first();
 }
+
+function update(updatedReservation){
+    const reservation_id = updatedReservation.reservation_id;
+    //console.log(updatedReservation)
+    return knex("reservations")
+        .where({ reservation_id })
+        .update(updatedReservation)
+        .returning("*")
+        .then((arr)=> arr[0]);
+}
+
 module.exports = {
     listReservationsByDate,
     create,
     read,
+    update,
 }

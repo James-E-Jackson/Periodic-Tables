@@ -1,4 +1,5 @@
 const service = require("./tables.service");
+const reservationService = require("../reservations/reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
 async function list(req, res){
@@ -18,8 +19,21 @@ async function tableExists(req, res, next){
 }
 
 async function isFree(req, res, next){
-    if(res.locals.table.status === "occupied") return next({ status: 400, message: `Table is already occupied`});
+    if(res.locals.table.status === "occupied") return next({ status: 400, message: `table is already occupied`});
     return next();
+}
+
+async function reservationExists(req, res, next){
+    const { reservation_id } = res.locals.table;
+    if(!reservation_id) return next({status: 400, message: `this table is not occupied`});
+
+    const reservation = await reservationService.read(reservation_id);
+    
+    if(reservation){
+        res.locals.reservation = reservation;
+        return next();
+    }
+    return next({ status: 404, message: `reservation not found`})
 }
 
 async function reservationIsValid(req, res, next){
@@ -29,12 +43,14 @@ async function reservationIsValid(req, res, next){
 
     if(!reservation_id) return next({ status: 400, message: "reservation_id must be included in the body of the request"});
 
-    const reservation = await service.findReservation(reservation_id);
+    const reservation = await reservationService.read(reservation_id);
 
     if(reservation){
 
-        if(reservation.people > res.locals.table.capacity) return next({ status: 400, message: "Reservation party size exceeds capacity"});
+        if(reservation.people > res.locals.table.capacity) return next({ status: 400, message: "reservation party size exceeds capacity"});
         
+        if(reservation.status === "seated") return next({ status: 400, message: "reservation party is already seated"});
+
         res.locals.reservation = reservation;
         return next();
     }
@@ -44,7 +60,7 @@ async function reservationIsValid(req, res, next){
 function isValidTable(req, res, next){
     const { data } = req.body;
 
-    if(!data) next({ status: 400, message: `Data must exist and be included in request.body` });
+    if(!data) next({ status: 400, message: `data must exist and be included in request.body` });
 
     const {table_name, capacity} = data;
     
@@ -70,20 +86,22 @@ async function update(req, res, next){
     const { reservation_id } = res.locals.reservation;
     const updatedTable = {...res.locals.table, status:"occupied", reservation_id};
     const data = await service.update(updatedTable);
+    const updatedReservation = {...res.locals.reservation, status: "seated"};
+    await reservationService.update(updatedReservation);
     return res.json({ data });
 }
 
 async function destroy(req, res, next){
-    const {table_name, status} = res.locals.table;
-    if(status !== "occupied") return next({status: 400, message: `${table_name} is not occupied`});
     const updatedTable = {...res.locals.table, status:"free", reservation_id:null};
     const data = await service.update(updatedTable);
+    const updatedReservation = {...res.locals.reservation, status: "finished"};
+    await reservationService.update(updatedReservation);
     return res.json({data});
 }
 
 module.exports = {
     list: asyncErrorBoundary(list),
-    create: [isValidTable, asyncErrorBoundary(create)],
-    update: [tableExists, reservationIsValid, isFree, asyncErrorBoundary(update)],
-    delete: [tableExists, asyncErrorBoundary(destroy)]
+    create: [asyncErrorBoundary(isValidTable), asyncErrorBoundary(create)],
+    update: [asyncErrorBoundary(tableExists), asyncErrorBoundary(reservationIsValid), asyncErrorBoundary(isFree), asyncErrorBoundary(update)],
+    delete: [asyncErrorBoundary(tableExists), asyncErrorBoundary(reservationExists), asyncErrorBoundary(destroy)]
 }

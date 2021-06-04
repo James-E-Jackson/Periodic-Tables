@@ -116,6 +116,29 @@ async function isValidReservation(req, res, next){
   return next();
 }
 
+async function isValidStatus(req, res, next){
+  const { status } = req.body.data;
+  const currentStatus = res.locals.reservation.status;
+
+  if(currentStatus === "finished"){
+    return next({
+      status: 400,
+      message: `This reservation is already finished`
+    })
+  }
+
+  if(status !== "booked" && status !== "seated" && status !=="finished"){
+    if(!status) req.body.data.status = "booked";
+    else{
+      return next({
+        status: 400,
+        message: `${status} is not a valid status`
+      })
+    }
+  }
+  return next();
+}
+
 async function reservationExists(req, res, next){
   const { reservation_id } = req.params;
   const reservation = await service.read(reservation_id);
@@ -126,8 +149,17 @@ async function reservationExists(req, res, next){
   next({ status: 404, message: `reservation_id ${reservation_id} not found`})
 }
 
+async function update(req, res){
+    const { status } = req.body.data;
+    const updatedReservation = {...res.locals.reservation, status};
+    const data = await service.update(updatedReservation);
+    //console.log(data)
+    return res.status(200).json({ data });
+}
+
 module.exports = {
   list: asyncErrorBoundary(list),
   create: [asyncErrorBoundary(isValidReservation), asyncErrorBoundary(create)],
   read: [asyncErrorBoundary(reservationExists), asyncErrorBoundary(read)],
+  update: [asyncErrorBoundary(reservationExists), asyncErrorBoundary(isValidStatus), asyncErrorBoundary(update)]
 };
