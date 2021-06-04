@@ -70,44 +70,47 @@ function ReservationSeat() {
     errorArr.map((err, index) => <ErrorAlert key={index} error={err} />);
 
   return (
-    <div className="d-flex">
-      {errorList()}
-      <ErrorAlert error={error} />
-      <div className="col-9">
-        <Reservation
-          reservation={reservation}
-          key={reservation.reservation_id}
-        />
-      </div>
-      <div className="col-3">
-        <label className="mb-0">Select Table</label>
-        <select
-          className="form-control form-select form-select-lg"
-          name="table_id"
-          id="table_id"
-          value={table_id}
-          onChange={(event) => setTable_id(Number(event.target.value))}
-        >
-          <option value={0}>Select table</option>
-          {tableList()}
-        </select>
-        <div>
-          <button
-            className="btn btn-primary"
-            type="submit"
-            onClick={handleSubmit}
+    <div>
+      <h2>Seat Reservation</h2>
+      <div className="d-flex">
+        {errorList()}
+        <ErrorAlert error={error} />
+        <div className="col-9">
+          <Reservation
+            reservation={reservation}
+            key={reservation.reservation_id}
+          />
+        </div>
+        <div className="col-3">
+          <label className="mb-0">Select Table</label>
+          <select
+            className="form-control form-select form-select-lg"
+            name="table_id"
+            id="table_id"
+            value={table_id}
+            onChange={(event) => setTable_id(Number(event.target.value))}
           >
-            Submit
-          </button>
-          <button
-            className="btn btn-danger"
-            onClick={(event) => {
-              event.preventDefault();
-              history.goBack();
-            }}
-          >
-            Cancel
-          </button>
+            <option value={0}>Select table</option>
+            {tableList()}
+          </select>
+          <div>
+            <button
+              className="btn btn-primary"
+              type="submit"
+              onClick={handleSubmit}
+            >
+              Submit
+            </button>
+            <button
+              className="btn btn-danger"
+              onClick={(event) => {
+                event.preventDefault();
+                history.goBack();
+              }}
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
     </div>

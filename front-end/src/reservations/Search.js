@@ -28,6 +28,7 @@ function Search() {
 
   return (
     <div>
+      <h2>Search for a reservation</h2>
       <form className="d-flex row justify-content-center">
         <ErrorAlert error={error} />
         <label className="col-3">Enter a phone number to search</label>

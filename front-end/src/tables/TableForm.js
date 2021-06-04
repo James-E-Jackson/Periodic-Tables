@@ -33,54 +33,61 @@ function TableForm() {
   };
 
   return (
-    <form noValidate>
-      <ErrorAlert error={error} />
-      <label>Table Name</label>
-      <input
-        required
-        className="form-control"
-        id="table_name"
-        type="text"
-        name="table_name"
-        minLength={2}
-        placeholder="Table Name"
-        value={formData.table_name}
-        onChange={(event) =>
-          setFormData({
-            ...formData,
-            table_name: event.target.value,
-          })
-        }
-      ></input>
-      <label>Capacity</label>
-      <input
-        required
-        className="form-control"
-        id="capacity"
-        type="number"
-        name="capacity"
-        min={1}
-        value={formData.capacity}
-        onChange={(event) =>
-          setFormData({
-            ...formData,
-            capacity: Number(event.target.value),
-          })
-        }
-      ></input>
-      <button className="btn btn-primary" type="submit" onClick={handleSubmit}>
-        Submit
-      </button>
-      <button
-        className="btn btn-danger"
-        onClick={(event) => {
-          event.preventDefault();
-          history.goBack();
-        }}
-      >
-        Cancel
-      </button>
-    </form>
+    <div>
+      <h2>Create Table</h2>
+      <form noValidate>
+        <ErrorAlert error={error} />
+        <label>Table Name</label>
+        <input
+          required
+          className="form-control"
+          id="table_name"
+          type="text"
+          name="table_name"
+          minLength={2}
+          placeholder="Table Name"
+          value={formData.table_name}
+          onChange={(event) =>
+            setFormData({
+              ...formData,
+              table_name: event.target.value,
+            })
+          }
+        ></input>
+        <label>Capacity</label>
+        <input
+          required
+          className="form-control"
+          id="capacity"
+          type="number"
+          name="capacity"
+          min={1}
+          value={formData.capacity}
+          onChange={(event) =>
+            setFormData({
+              ...formData,
+              capacity: Number(event.target.value),
+            })
+          }
+        ></input>
+        <button
+          className="btn btn-primary"
+          type="submit"
+          onClick={handleSubmit}
+        >
+          Submit
+        </button>
+        <button
+          className="btn btn-danger"
+          onClick={(event) => {
+            event.preventDefault();
+            history.goBack();
+          }}
+        >
+          Cancel
+        </button>
+      </form>
+    </div>
   );
 }
 

@@ -87,122 +87,129 @@ function ReservationForm() {
     errorArr.map((err, index) => <ErrorAlert key={index} error={err} />);
 
   return (
-    <div className="form-group">
-      {errorList()}
-      <ErrorAlert error={error} />
-      <label>First Name</label>
-      <input
-        required
-        className="form-control"
-        id="first_name"
-        type="text"
-        name="first_name"
-        placeholder="First"
-        value={formData.first_name}
-        onChange={(event) =>
-          setFormData({
-            ...formData,
-            first_name: event.target.value,
-          })
-        }
-      ></input>
-      <label>Last Name</label>
-      <input
-        required
-        className="form-control"
-        id="last_name"
-        type="text"
-        name="last_name"
-        placeholder="Last"
-        value={formData.last_name}
-        onChange={(event) =>
-          setFormData({
-            ...formData,
-            last_name: event.target.value,
-          })
-        }
-      ></input>
-      <label>Mobile Number</label>
-      <input
-        required
-        className="form-control"
-        id="mobile_number"
-        type="text"
-        name="mobile_number"
-        placeholder="123-123-1234"
-        value={formData.mobile_number}
-        onChange={(event) =>
-          setFormData({
-            ...formData,
-            mobile_number: event.target.value,
-          })
-        }
-      ></input>
-      <label>Reservation Date</label>
-      <input
-        required
-        className="form-control"
-        id="reservation_date"
-        type="date"
-        name="reservation_date"
-        placeholder="YYYY-MM-DD"
-        pattern="\d{4}-\d{2}-\d{2}"
-        value={formData.reservation_date}
-        onChange={(event) =>
-          setFormData({
-            ...formData,
-            reservation_date: event.target.value,
-          })
-        }
-      ></input>
-      <label>Reservation Time</label>
-      <input
-        required
-        className="form-control"
-        id="reservation_time"
-        type="time"
-        name="reservation_time"
-        placeholder="HH:MM"
-        min="09:30"
-        max="21:30"
-        pattern="[0-9]{2}:[0-9]{2}"
-        value={formData.reservation_time}
-        onChange={(event) =>
-          setFormData({
-            ...formData,
-            reservation_time: event.target.value,
-          })
-        }
-      ></input>
-      <label>Party Size</label>
-      <input
-        required
-        className="form-control"
-        id="people"
-        type="number"
-        name="people"
-        min={1}
-        value={formData.people}
-        onChange={(event) =>
-          setFormData({
-            ...formData,
-            people: Number(event.target.value),
-          })
-        }
-      ></input>
-      <button className="btn btn-primary" type="submit" onClick={handleSubmit}>
-        Submit
-      </button>
-      <button
-        className="btn btn-danger"
-        type="cancel"
-        onClick={(event) => {
-          event.preventDefault();
-          history.goBack();
-        }}
-      >
-        Cancel
-      </button>
+    <div>
+      <h2>Reservation Form</h2>
+      <div className="form-group">
+        {errorList()}
+        <ErrorAlert error={error} />
+        <label>First Name</label>
+        <input
+          required
+          className="form-control"
+          id="first_name"
+          type="text"
+          name="first_name"
+          placeholder="First"
+          value={formData.first_name}
+          onChange={(event) =>
+            setFormData({
+              ...formData,
+              first_name: event.target.value,
+            })
+          }
+        ></input>
+        <label>Last Name</label>
+        <input
+          required
+          className="form-control"
+          id="last_name"
+          type="text"
+          name="last_name"
+          placeholder="Last"
+          value={formData.last_name}
+          onChange={(event) =>
+            setFormData({
+              ...formData,
+              last_name: event.target.value,
+            })
+          }
+        ></input>
+        <label>Mobile Number</label>
+        <input
+          required
+          className="form-control"
+          id="mobile_number"
+          type="text"
+          name="mobile_number"
+          placeholder="123-123-1234"
+          value={formData.mobile_number}
+          onChange={(event) =>
+            setFormData({
+              ...formData,
+              mobile_number: event.target.value,
+            })
+          }
+        ></input>
+        <label>Reservation Date</label>
+        <input
+          required
+          className="form-control"
+          id="reservation_date"
+          type="date"
+          name="reservation_date"
+          placeholder="YYYY-MM-DD"
+          pattern="\d{4}-\d{2}-\d{2}"
+          value={formData.reservation_date}
+          onChange={(event) =>
+            setFormData({
+              ...formData,
+              reservation_date: event.target.value,
+            })
+          }
+        ></input>
+        <label>Reservation Time</label>
+        <input
+          required
+          className="form-control"
+          id="reservation_time"
+          type="time"
+          name="reservation_time"
+          placeholder="HH:MM"
+          min="09:30"
+          max="21:30"
+          pattern="[0-9]{2}:[0-9]{2}"
+          value={formData.reservation_time}
+          onChange={(event) =>
+            setFormData({
+              ...formData,
+              reservation_time: event.target.value,
+            })
+          }
+        ></input>
+        <label>Party Size</label>
+        <input
+          required
+          className="form-control"
+          id="people"
+          type="number"
+          name="people"
+          min={1}
+          value={formData.people}
+          onChange={(event) =>
+            setFormData({
+              ...formData,
+              people: Number(event.target.value),
+            })
+          }
+        ></input>
+        <button
+          className="btn btn-primary"
+          type="submit"
+          onClick={handleSubmit}
+        >
+          Submit
+        </button>
+        <button
+          className="btn btn-danger"
+          type="cancel"
+          onClick={(event) => {
+            event.preventDefault();
+            history.goBack();
+          }}
+        >
+          Cancel
+        </button>
+      </div>
     </div>
   );
 }
