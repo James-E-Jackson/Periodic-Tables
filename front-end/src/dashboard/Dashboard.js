@@ -3,6 +3,7 @@ import { listReservations, listTables } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import Reservation from "../reservations/Reservation";
 import Table from "../tables/Table";
+import { useHistory } from "react-router";
 
 /**
  * Defines the dashboard page.
@@ -15,6 +16,7 @@ function Dashboard({ date }) {
   const [reservationsError, setReservationsError] = useState(null);
   const [tables, setTables] = useState([]);
   const [tablesError, setTablesError] = useState(null);
+  const history = useHistory();
 
   useEffect(loadDashboard, [date]);
 
@@ -45,6 +47,42 @@ function Dashboard({ date }) {
   return (
     <main>
       <h1>Dashboard</h1>
+      <div>
+        <button
+          name="next"
+          className="btn btn-info"
+          onClick={() => {
+            let tomorrow = new Date(date);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            tomorrow = tomorrow.toISOString().substr(0, 10);
+            history.push(`/dashboard?date=${tomorrow}`);
+          }}
+        >
+          Next
+        </button>
+        <button
+          name="today"
+          className="btn btn-info"
+          onClick={() => {
+            let today = new Date().toISOString().substr(0, 10);
+            history.push(`/dashboard?date=${today}`);
+          }}
+        >
+          Today
+        </button>
+        <button
+          name="previous"
+          className="btn btn-info"
+          onClick={() => {
+            let yesterday = new Date(date);
+            yesterday.setDate(yesterday.getDate() - 1);
+            yesterday = yesterday.toISOString().substr(0, 10);
+            history.push(`/dashboard?date=${yesterday}`);
+          }}
+        >
+          Previous
+        </button>
+      </div>
       <div className="d-md-flex mb-3">
         <h4 className="mb-0">Reservations for {date}</h4>
       </div>

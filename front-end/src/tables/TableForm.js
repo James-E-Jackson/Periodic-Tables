@@ -21,6 +21,7 @@ function TableForm() {
       createTable(formData, abortController.signal)
         .then(() => history.push(`/dashboard`))
         .catch(setError);
+      return () => abortController.abort();
     }
   };
   const valid = () => {

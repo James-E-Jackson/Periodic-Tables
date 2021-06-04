@@ -7,7 +7,6 @@ import Reservation from "./Reservation";
 function ReservationSeat() {
   const { reservation_id } = useParams();
   const [error, setError] = useState(null);
-  const [errorArr, setErrorArr] = useState([]);
   const [reservation, setReservation] = useState({});
   const [tables, setTables] = useState([]);
   const [table_id, setTable_id] = useState(0);
@@ -22,27 +21,25 @@ function ReservationSeat() {
       .then(setReservation)
       .catch(setError);
     listTables().then(setTables).catch(setError);
-
+    return () => abortController.abort();
     //console.log(reservation)
   }
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const abortController = new AbortController();
-    setErrorArr([]);
 
     if (valid()) {
       occupyTable(table_id, reservation_id, abortController.signal)
         .then(() => history.push(`/dashboard`))
         .catch(setError);
-    } else {
-      setErrorArr(errors);
+      return () => abortController.abort();
     }
   };
 
   const valid = () => {
     if (!table_id) {
-      errors.push({ message: "Please choose a table" });
+      setError({ message: "Please choose a table" });
       return false;
     }
     const { capacity, status } = tables.find(
@@ -50,30 +47,26 @@ function ReservationSeat() {
     );
 
     if (reservation.people > capacity)
-      errors.push({ message: "Number of people cannot exceed capacity" });
+      setError({ message: "Number of people cannot exceed capacity" });
 
     if (status === "occupied")
-      errors.push({ message: "That table is currently occupied" });
+      setError({ message: "That table is currently occupied" });
 
     return !errors.length;
   };
 
   const tableList = () => {
-    return tables.map((table, index) => (
-      <option key={index} value={table.table_id}>
+    return tables.map((table) => (
+      <option key={table.table_id} value={table.table_id}>
         {table.table_name} - {table.capacity}
       </option>
     ));
   };
 
-  const errorList = () =>
-    errorArr.map((err, index) => <ErrorAlert key={index} error={err} />);
-
   return (
     <div>
       <h2>Seat Reservation</h2>
       <div className="d-flex">
-        {errorList()}
         <ErrorAlert error={error} />
         <div className="col-9">
           <Reservation

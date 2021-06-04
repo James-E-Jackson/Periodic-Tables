@@ -21,6 +21,7 @@ function Table({ table, loadPage }) {
       )
         .then(loadPage)
         .catch(setUpdateError);
+      return () => abortController.abort();
     }
   };
 

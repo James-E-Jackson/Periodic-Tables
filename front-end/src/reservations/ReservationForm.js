@@ -19,8 +19,6 @@ function ReservationForm() {
   const { reservation_id = null } = useParams();
   const [formData, setFormData] = useState(defaultState);
   const [error, setError] = useState(null);
-  const errors = [];
-  const [errorArr, setErrorArr] = useState([]);
   const history = useHistory();
 
   useEffect(() => {
@@ -35,13 +33,14 @@ function ReservationForm() {
           })
         )
         .catch(setError);
+      return () => abortController.abort();
     }
   }, [reservation_id]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const abortController = new AbortController();
-    setErrorArr([]);
+    setError(null);
 
     if (valid() && !reservation_id) {
       createReservation(formData, abortController.signal)
@@ -55,8 +54,6 @@ function ReservationForm() {
           history.push(`/dashboard?date=${formData.reservation_date}`)
         )
         .catch(setError);
-    } else {
-      setErrorArr(errors);
     }
   };
 
@@ -68,29 +65,23 @@ function ReservationForm() {
     const resTime = Number(formData.reservation_time.split(":").join(""));
 
     if (reservationDate < today) {
-      errors.push({ message: "Cannot make reservations in the past" });
+      setError({ message: "Cannot make reservations in the past" });
     }
     if (reservationDate.getDay() === 2) {
-      errors.push({ message: "Closed on Tuesdays" });
+      setError({ message: "Closed on Tuesdays" });
     }
-    //console.log(resTime)
     if (resTime > 2130 || resTime < 1030) {
-      errors.push({
+      setError({
         message: "Cannot make a reservation after 9:30 PM or before 10:30 AM",
       });
     }
-    //console.log(errors)
-    return !errors.length;
+    return !error;
   };
-
-  const errorList = () =>
-    errorArr.map((err, index) => <ErrorAlert key={index} error={err} />);
 
   return (
     <div>
       <h2>Reservation Form</h2>
       <div className="form-group">
-        {errorList()}
         <ErrorAlert error={error} />
         <label>First Name</label>
         <input

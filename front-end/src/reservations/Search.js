@@ -15,6 +15,7 @@ function Search() {
       .then(setReservations)
       .then(setSearched(true))
       .catch(setError);
+    return () => abortController.abort();
   }
 
   const reservationList = () =>
